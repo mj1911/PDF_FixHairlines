@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-""" Enlarges very thin lines of PDF files for visibility and printing.
-    by RDTSC 2021 v0.1 """
+""" Enlarges very thin lines of PDF files for visibility and printing """
 
 import os
 import re           # regular expressions
@@ -10,6 +9,7 @@ import subprocess   # for running ghostscript
 
 _author_ = 'RDTSC'
 _version_ = '0.1'
+_date_ = '2021'
 
 try:
     gs1 = shutil.which("gs")    # ensure GhostScript is available...
@@ -21,6 +21,7 @@ try:
         gs = "gs"
     elif gs2:
         gs = "gswin64.exe"
+    del gs1, gs2
 except shutil.Error as e:
     print("Error checking for GhostScript: " + e)
     exit()
@@ -169,8 +170,8 @@ def main(argv):
         print(f"*** Deleting {midfile}...")
         try:
             os.remove(midfile)
-        except (FileNotFoundError, OSError):
-            print(f"*** Could not delete {midfile}!")
+        except (FileNotFoundError, OSError) as e:
+            print(f"*** Could not delete {midfile}: {e}")
             retval = 1
 
         # this file is complete!
@@ -185,8 +186,12 @@ def main(argv):
 
 
 if __name__ == "__main__":
+# for debugging, un-comment and run this with no params to define these args:
+#    sys.argv = ["PDF_Fix.py", "Test.pdf", "b.PDF", "c.XDF"]
+#    main(sys.argv)
+#    exit()
     if len(sys.argv) == 1:
-        print(f"""PDF Fix Hairlines by {_author_} v{_version_}\n
+        print(f"""PDF Fix Hairlines by {_author_} v{_version_} {_date_}\n
 Usage:  [python3 PDF_Fix.py file.pdf]  or drag .pdf file(s) onto .cmd or .sh
 Purpose: uncompresses and searches for line widths less than 1.000pt.  If any
 thin lines are found, these may be changed.  The default increase is twenty
@@ -196,10 +201,6 @@ a size if desired.  A special case is 0pt, so-called HairLines. These default to
 You may want to try printing the Test.pdf and Test-fixed.pdf examples.\n""")
         tmp = input("Press <Enter> to exit: ")
         tmp = tmp
-# for debugging, un-comment and run this with no params to define these args:
-#        if __debug__:
-#            sys.argv = ["PDF_Fix.py", "Test.pdf", "b.PDF", "c.XDF"]
-#            main(sys.argv)
         exit()
     main(sys.argv[0:])
 
